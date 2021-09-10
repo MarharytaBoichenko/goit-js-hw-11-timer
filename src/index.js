@@ -1,46 +1,70 @@
 import './sass/main.scss';
-import createMarkup from "./js/markup.js";
+// import createMarkup from "./js/markup.js";
+
+import markup from "../templates/markup.hbs";
+
 // import { refs } from "./js/refs.js";
 // const { day, hour, min, sec, stopBtn, continueBtn } = refs;
 // console.log(refs.day);
 const body = document.querySelector('body');
+const counterEl = document.querySelector('.counter');
+console.log(counterEl);
 
-const markup = createMarkup();    
-body.insertAdjacentHTML('afterbegin', markup);
+// const markup = createMarkup();    
 
-const refs = {
-    day: document.querySelector('[data-value="days"]'),
-    hour: document.querySelector('[data-value="hours"]'),
-    min: document.querySelector('[data-value="mins"]'),
-    sec: document.querySelector('[data-value="secs"]'),
-    stopBtn: document.querySelector('[data-action-stop]'),
-    continueBtn: document.querySelector('[data-action-continue]'),
-};
 
-const { day, hour, min, sec, stopBtn, continueBtn } = refs;
-console.log(day);
+// const markupOne = createMarkup();    
+// body.insertAdjacentHTML('afterbegin', markupOne);
 
 class CountdownTimer {
-    constructor({ selector, targetDate, onTickTimer }) {
+    constructor({ selector, targetDate }) {
         this.intervalId = null;
         this.selector = selector;
         this.targetDate = targetDate;
-        this.onTickTimer = onTickTimer;
-    }
+        this.markup = markup;
+        this.makeCounter()
+        this.start();
+    };
+
+    // getRefs() {
+    //       return {
+    //         day: document.querySelector(`${this.selector} [data-value="days"]`),
+    //         hour: document.querySelector(`${this.selector} [data-value="hours"]`),
+    //         min: document.querySelector(`${this.selector} [data-value="mins"]`),
+    //         sec: document.querySelector(`${this.selector} [data-value="secs"]`),
+    //     //     stopBtn: document.querySelector(`${this.selector} [data-action-stop]`),
+    //     //     continueBtn: document.querySelector(`${this.selector} [data-action-continue]`),
+    //     }
+    // };
    
+
+    makeCounter(date, id) {
+        const currentDate = Date.now();
+        const deltaTime = - (currentDate - this.targetDate);
+        const timeToCount = this.getTimeComponents(deltaTime);
+        console.log(timeToCount);
+        // const markupOne = this.markup(
+        //     this.getTimeComponents(deltaTime), this.selector);
+        // console.log(markupOne);
+        // body.insertAdjacentHTML('afterbegin', markupOne);
+        counterEl.innerHTML = `${this.markup(
+            timeToCount, this.selector
+        )}`;
+        
+    };
+
     start() {
-        this.intervalId = setInterval(() => {
-            const currentDate = Date.now();
-            const deltaTime = - (currentDate - this.targetDate);
-            const timeToCount = this.getTimeComponents(deltaTime);
-            this.onTickTimer(timeToCount);
-        }, 1000);  
+        // const markupTimer = markup(this.getTimeComponents(deltaTime));   
+        // console.log(markupTimer);
+        // body.insertAdjacentHTML('afterbegin', markupTimer);
+
+        this.intervalId = setInterval(this.makeCounter, 1000, this.targetDate, this.selector);  
     }
 
     stop() {
         clearInterval(this.intervalId);
         const timeToCount = this.getTimeComponents(0);
-        this.onTickTimer(timeToCount);
+        // this.updateInterface(timeToCount);
         console.log("Остановить");
     }
     
@@ -54,23 +78,33 @@ class CountdownTimer {
 
     pad(value) {
     return String(value).padStart(2, '0');
-  }
+    };
+
+    // updateInterface({ days, hours, mins, secs }) {
+    //     const values = this.getRefs();
+    //     console.log(values);
+  
+    // values.day.textContent = days;
+    // values.hour.textContent = hours;
+    // values.min.textContent = mins;
+    // values.sec.textContent = secs;
+    // };
+
 }
 
 const timer = new CountdownTimer({
   selector: '#timer-1',
     targetDate: new Date('Oct 26, 2021'),
-  onTickTimer: updateInterface,
 });
 
-timer.start();
+// const timerOne = new CountdownTimer({
+//      selector: '#timer-2',
+//     targetDate: new Date('Nov 26, 2021'),
+// })
 
-function updateInterface({ days, hours, mins, secs }) {
-day.textContent = days;
-hour.textContent = hours;
-min.textContent = mins;
-sec.textContent = secs;
-};
+const stopBtn = document.querySelector( '[data-action-stop]');
+const continueBtn = document.querySelector('[data-action-continue]');
+console.log(stopBtn);
 
 stopBtn.addEventListener('click', timer.stop.bind(timer));
 continueBtn.addEventListener('click', timer.start.bind(timer));
