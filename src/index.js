@@ -8,24 +8,13 @@ class CountdownTimer {
         this.selector = selector;
         this.targetDate = targetDate;
        
-        document.body.insertAdjacentHTML('beforeend', createMarkup(selector));
+        document.body.insertAdjacentHTML('afterbegin', createMarkup(selector));
         this.container = document.getElementById(selector);
         console.log(this.container)
         this.start();
         this.addListenersBtns();            
     };
-    
-    // start = () => {
-    //     this.intervalId = setInterval(() => {
-    //         const currentDate = Date.now();
-    //         const deltaTime = this.targetDate - currentDate;
-    //         const time = this.getTimeComponents(deltaTime);
-    //         console.log(`start`);
-    
-    //         this.updateInterface(time)
-    //     }, 1000); 
-    // }; 
-
+  
       start(){
         this.intervalId = setInterval(() => {
             const currentDate = Date.now();
@@ -37,6 +26,13 @@ class CountdownTimer {
         }, 1000); 
     }; 
 
+     addListenersBtns() {
+        const stopBtn = this.container.querySelector('[data-action-stop]');
+        const continueBtn = this.container.querySelector('[data-action-continue]');
+        stopBtn.addEventListener('click', this.stop.bind(this));
+        continueBtn.addEventListener('click', this.start.bind(this));
+    };
+
     updateInterface({ days, hours, mins, secs }) {
             this.container.querySelector('[data-value="days"]').textContent = days;
             this.container.querySelector('[data-value="hours"]').textContent = hours;
@@ -44,28 +40,12 @@ class CountdownTimer {
             this.container.querySelector('[data-value="secs"]').textContent = secs;
     };
 
-    addListenersBtns() {
-        this.container.querySelector( '[data-action-stop]').addEventListener('click', this.stop);
-        const continueBtn = this.container.querySelector('[data-action-continue]');
-        // console.log(stopBtn);
-        console.log(continueBtn);
-        // stopBtn.addEventListener('click', this.stop);
-        continueBtn.addEventListener('click', this.start);
-    };
-
-    stop = () => {
+    stop() {
         clearInterval(this.intervalId);
         console.log("Остановить");
         const timeToCount = this.getTimeComponents(0);
         this.updateInterface(this.getTimeComponents(0));    
     };
-
-
-//     stop = () => {
-//     clearInterval(this.intervalId);
-//     const timeToCount = this.getTimeComponents(0);
-//     console.log('Остановить');
-//   };
     
     getTimeComponents(time) {
     const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
