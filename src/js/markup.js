@@ -1,5 +1,5 @@
-export  default  function createMarkup(){
-    return `<div class="timer" id="timer-1">
+export default function createMarkup(selector) {
+  return `<div class="timer" id="${selector}">
   <div class="field">
     <span class="value" data-value="days">11</span>
     <span class="label">Days</span>
@@ -19,5 +19,8 @@ export  default  function createMarkup(){
     <span class="value" data-value="secs">11</span>
     <span class="label">Seconds</span>
   </div>
-</div>`
+  <button class="timer-btn stop " data-action-stop>Остановить отсчет</button>
+    <button class="timer-btn start" data-action-continue>Продолжить отсчет</button>
+</div>
+`
 }
